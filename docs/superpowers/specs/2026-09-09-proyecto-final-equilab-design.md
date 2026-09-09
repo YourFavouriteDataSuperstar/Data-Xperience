@@ -107,9 +107,12 @@ Export de la tabla `personas` completa, ZSTD, 45,1 MB, más un README con el
 diccionario de las 37 variables en el formato del README que ya existe para la
 GEIH de junio.
 
-**Pendiente de verificar antes de publicar:** `notebooks/` tiene su propio `.git`
-dentro del repo del curso. Hay que confirmar cuál de los dos remotos sirve la URL
-cruda que usan los cuadernos 05 y 06, para que la base quede en el mismo lugar.
+**Resuelto:** los archivos de `notebooks/` los versiona el repo raíz
+(`YourFavouriteDataSuperstar/Data-Xperience`), que es el que sirve la URL cruda de los
+cuadernos 05 y 06. El `.git` que hay dentro de `notebooks/` apunta al mismo remoto pero
+no tiene ningún commit: es un residuo inerte. **Todo `git add` se hace desde la raíz del
+repo**; ejecutado dentro de `notebooks/` escribiría en el repo vacío y el archivo nunca
+llegaría a GitHub.
 
 ### 4.2 `notebooks/07_proyecto_final_equilab.ipynb`
 
@@ -198,8 +201,7 @@ la publicación los da la docente, no el asistente.
    quede con los cuatro más flojos en un trabajo que pesa el 60 % del corte.
 3. **Fechas**: apertura y cierre. Por el plan clase a clase, abrir en la clase 22
    (semana 8) y cerrar antes de la 25 (semana 9).
-4. **Remoto del parquet**: cuál de los dos `.git` sirve la URL cruda de los
-   cuadernos 05 y 06.
+(El remoto del parquet ya quedó resuelto: ver §4.1.)
 
 ---
 
