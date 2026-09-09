@@ -15,3 +15,36 @@ Microdato de la **Gran Encuesta Integrada de Hogares (GEIH) – junio de 2025**,
 - Uso academico. Los microdatos de la GEIH son de acceso publico bajo los terminos de uso del DANE.
 
 Usado por los notebooks **05** (tutorial) y **06** (taller).
+
+## `geih_equilab_2021_2026.parquet`
+
+Extracto de la tabla `personas` de la base de docencia del proyecto **Equilab**
+(`geih_docencia.duckdb`, repo [Equilab---Radar](https://github.com/YourFavouriteDataSuperstar/Equilab---Radar)),
+construida a partir de la GEIH del DANE.
+
+- Cobertura: **2021-2026**, con **2026 con solo 6 meses publicados** (enero-junio).
+- **4.772.421 filas, 37 columnas**. Exportado sin filtrar con `COPY (SELECT * FROM personas) TO ... (FORMAT PARQUET, COMPRESSION ZSTD)`
+  (ver `scripts/exportar_base_equilab.py`). Peso en disco: 45,1 MB.
+- Las 37 variables, agrupadas en cinco bloques tematicos (mas cinco columnas
+  identificadoras/administrativas de la tabla origen que no encajan en ningun
+  bloque tematico: `departamento_cod`, `en_edad_de_trabajar`, `directorio`,
+  `secuencia`, `orden`):
+
+| Bloque | Variables |
+|---|---|
+| Identificacion | `anio`, `mes`, `departamento`, `zona` |
+| Persona | `edad`, `sexo`, `nivel_educativo`, `educacion_superior` |
+| Dimensiones de diversidad | `mujer`, `joven`, `racializada`, `lgbtiq`, `migrante`, `discapacidad` |
+| Situacion laboral | `ocupado`, `desocupado`, `inactivo`, `posicion`, `asalariado`, `independiente`, `rama`, `informal`, `tiene_contrato`, `contrato_escrito`, `cotiza_pension`, `afiliado_salud`, `subempleo_horas`, `horas_semana`, `ingreso_laboral`, `salario_hora` |
+| Ponderacion | `fex`, `fex_mes` |
+
+**Advertencia sobre `migrante`:** la variable no existe en 2021 (0 registros)
+y cae de 29.756 registros en 2022 a 8.419 en 2025 (verificado sobre este
+parquet). No usarla para series de tiempo: la caida refleja un cambio en la
+cobertura de la pregunta en la encuesta, no una tendencia real.
+
+Servido por URL cruda en:
+`https://raw.githubusercontent.com/YourFavouriteDataSuperstar/Data-Xperience/main/notebooks/data/geih_equilab_2021_2026.parquet`
+
+Usado por el proyecto final del curso (analisis de brechas laborales con SQL
+sobre DuckDB desde Google Colab).
