@@ -90,7 +90,7 @@ celdas.append(md(
         "Cinco equipos, cinco poblaciones, un solo programa que financiar. "
         "Analisis de brechas laborales de la GEIH del DANE (2021-2026) con SQL sobre DuckDB.",
         pastillas=[("NIVEL: AVANZADO", True),
-                   ("PESO: 60 % DEL CORTE 2", False),
+                   ("PESO: 10 % DE LA NOTA FINAL", False),
                    ("SQL + DATOS REALES", False)])))
 
 celdas.append(md(
@@ -147,7 +147,7 @@ celdas.append(md(
         ("1", "Mujeres", "<code>mujer</code>",
          "Paradoja: su informalidad es <b>menor</b> que la de los hombres. Si no desarman "
          "esa cifra, van a concluir que no hay brecha."),
-        ("2", "Jovenes (14 a 28 anos)", "<code>joven</code>",
+        ("2", "Jovenes (18 a 24 anos)", "<code>joven</code>",
          "Brecha limpia. Es el caso mas accesible de los cinco, asi que el liston de "
          "profundidad les queda mas alto."),
         ("3", "Personas racializadas", "<code>racializada</code>",
@@ -554,6 +554,7 @@ celdas.append(md(
 celdas.append(code(
     'con.execute("""\n'
     "SELECT CASE WHEN migrante = 1 THEN 'Migrante' ELSE 'Resto' END AS grupo,\n"
+    "       count(*)                                                                        AS registros,\n"
     "       round(100 * sum(CASE WHEN zona = 'Urbano' THEN fex END) / sum(fex), 1)          AS pct_urbano,\n"
     "       round(100 * sum(CASE WHEN educacion_superior = 1 THEN fex END) / sum(fex), 1)   AS pct_superior,\n"
     "       round(sum(fex * edad) / sum(fex), 1)                                            AS edad_promedio\n"
@@ -646,7 +647,7 @@ celdas.append(bloque_claro(
     '<th style="padding:8px;text-align:left;">Tu poblacion</th>'
     '<th style="padding:8px;text-align:left;">Escribe exactamente</th></tr>'
     '<tr style="background:#FFFFFF;"><td style="padding:8px;">1</td><td style="padding:8px;">Mujeres</td><td style="padding:8px;"><code>"mujer"</code></td></tr>'
-    '<tr><td style="padding:8px;">2</td><td style="padding:8px;">Jovenes (14 a 28)</td><td style="padding:8px;"><code>"joven"</code></td></tr>'
+    '<tr><td style="padding:8px;">2</td><td style="padding:8px;">Jovenes (18 a 24)</td><td style="padding:8px;"><code>"joven"</code></td></tr>'
     '<tr style="background:#FFFFFF;"><td style="padding:8px;">3</td><td style="padding:8px;">Personas racializadas</td><td style="padding:8px;"><code>"racializada"</code></td></tr>'
     '<tr><td style="padding:8px;">4</td><td style="padding:8px;">Personas LGBTIQ+</td><td style="padding:8px;"><code>"lgbtiq"</code></td></tr>'
     '<tr style="background:#FFFFFF;"><td style="padding:8px;">5</td><td style="padding:8px;">Personas con discapacidad</td><td style="padding:8px;"><code>"discapacidad"</code></td></tr>'
@@ -718,6 +719,7 @@ celdas.append(code(
     "# Paso 1: en que se diferencian los dos grupos, ademas de la informalidad\n"
     "con.execute(f\"\"\"\n"
     "SELECT CASE WHEN {MI_DIMENSION} = 1 THEN 'Mi poblacion' ELSE 'Resto' END AS grupo,\n"
+    "       count(*)                                                                      AS registros,\n"
     "       round(100 * sum(CASE WHEN zona = 'Urbano' THEN fex END) / sum(fex), 1)        AS pct_urbano,\n"
     "       round(100 * sum(CASE WHEN educacion_superior = 1 THEN fex END) / sum(fex), 1) AS pct_superior,\n"
     "       round(sum(fex * edad) / sum(fex), 1)                                          AS edad_promedio\n"
@@ -756,6 +758,7 @@ celdas.append(md("*Tu conclusion (compara la cifra cruda con la controlada, y di
 celdas.append(md(
     "#### P4. Como cambio entre 2021 y 2025?\n"
     "\n"
+    "Trae la serie completa de tu poblacion, un ano por fila, y mirala antes de contarla.\n"
     "Y revisa la columna de registros antes de narrar cualquier tendencia: si la muestra se\n"
     "mueve mucho entre anos, el cambio puede estar en la encuesta y no en el mercado laboral."))
 
@@ -834,12 +837,12 @@ celdas.append(md(
 celdas.append(code(
     "import matplotlib.pyplot as plt\n"
     "\n"
-    "datos = con.execute(\"\"\"\n"
+    "datos = con.execute(f\"\"\"\n"
     "SELECT departamento,\n"
     "       count(*)                                      AS registros,\n"
     "       round(100 * sum(fex * informal) / sum(fex), 1) AS informal_pct\n"
     "FROM personas\n"
-    "WHERE anio = 2025 AND ocupado = 1 AND migrante = 1\n"
+    "WHERE anio = 2025 AND ocupado = 1 AND {MI_DIMENSION} = 1\n"
     "GROUP BY 1\n"
     "HAVING count(*) >= 100\n"
     "ORDER BY 3 DESC\n"
@@ -850,8 +853,9 @@ celdas.append(code(
     'ax.barh(datos["departamento"], datos["informal_pct"], color="#0B4F6C")\n'
     "ax.invert_yaxis()\n"
     'ax.set_xlabel("Informalidad (%)")\n'
-    'ax.set_title("Informalidad de la poblacion migrante ocupada, 2025")\n'
-    "ax.set_xlim(0, 118)\n"
+    'ax.set_title(f"Informalidad de la poblacion ocupada con {MI_DIMENSION} = 1, 2025")\n'
+    "# El tope del eje sale de los datos: deja aire para la etiqueta de la barra mas larga.\n"
+    'ax.set_xlim(0, datos["informal_pct"].max() * 1.2)\n'
     'for lado in ("top", "right"):\n'
     "    ax.spines[lado].set_visible(False)\n"
     '\n'
