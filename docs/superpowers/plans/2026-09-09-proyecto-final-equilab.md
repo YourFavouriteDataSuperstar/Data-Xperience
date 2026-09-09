@@ -124,7 +124,7 @@ consulta el archivo local. Anotarlo y seguir — no bloquea las tareas siguiente
 
 ---
 
-### Task 2: Cuaderno 07 — secciones 0 a 4 (conexion, regla de oro, caso resuelto)
+### Task 2: Cuaderno 07 completo (secciones 0 a 7)
 
 **Files:**
 - Create: `scripts/construir_cuaderno_07.py`
@@ -132,9 +132,9 @@ consulta el archivo local. Anotarlo y seguir — no bloquea las tareas siguiente
 
 **Interfaces:**
 - Consumes: el URL del parquet de la Task 1.
-- Produces: `construir_cuaderno_07.py` con `bloque_oscuro(titulo, bajada)`,
-  `bloque_claro(html)` y `md(texto)` / `code(fuente)`, que la Task 3 reutiliza
-  para agregar las secciones 5 a 7.
+- Produces: el cuaderno plantilla completo que reciben los cinco equipos.
+  Se construye de una sola pasada: el generador escribe las ocho secciones y el
+  cuaderno se ejecuta una vez al final. No se arma ni se entrega por partes.
 
 - [ ] **Step 1: Escribir el generador con los helpers de estilo**
 
@@ -277,52 +277,7 @@ crece en lo urbano (87,1 vs 47,5): la brecha es real.** Y la advertencia: no
 siempre pasa esto — hay poblaciones donde la brecha cruda se desarma al
 controlar, y detectarlo es parte del trabajo de cada equipo.
 
-- [ ] **Step 7: Generar y ejecutar el cuaderno**
-
-```bash
-python3 scripts/construir_cuaderno_07.py
-jupyter nbconvert --to notebook --execute --inplace \
-  --ExecutePreprocessor.timeout=600 notebooks/07_proyecto_final_equilab.ipynb
-```
-Expected: termina sin error y el `.ipynb` queda con outputs.
-
-- [ ] **Step 8: Verificar que ninguna celda fallo y que las cifras del texto cuadran**
-
-Run:
-```bash
-python3 -c "
-import json
-nb=json.load(open('notebooks/07_proyecto_final_equilab.ipynb'))
-errores=[c for c in nb['cells'] if any(o.get('output_type')=='error' for o in c.get('outputs',[]))]
-vacias=[c for c in nb['cells'] if c['cell_type']=='code' and c['source'] and not c.get('outputs')]
-print('celdas con error:',len(errores),'| celdas de codigo sin salida:',len(vacias))
-texto=json.dumps(nb)
-for cifra in ['87,8','633.137','98,4','47,5','90,2']:
-    print(cifra, 'OK' if cifra in texto else 'FALTA')
-"
-```
-Expected: `celdas con error: 0`, y las cinco cifras en OK. Cualquier `FALTA`
-significa que el texto y las salidas se separaron: corregir el texto, no la salida.
-
-- [ ] **Step 9: Commit**
-
-```bash
-git add scripts/construir_cuaderno_07.py notebooks/07_proyecto_final_equilab.ipynb
-git commit -m "Cuaderno 07: conexion, regla de oro y caso resuelto de migrantes" -- scripts/construir_cuaderno_07.py notebooks/07_proyecto_final_equilab.ipynb
-```
-
----
-
-### Task 3: Cuaderno 07 — secciones 5 a 7 (esqueleto, graficas, plus Quarto)
-
-**Files:**
-- Modify: `scripts/construir_cuaderno_07.py`
-- Modify: `notebooks/07_proyecto_final_equilab.ipynb` (regenerado y reejecutado)
-
-**Interfaces:**
-- Consumes: `bloque_oscuro`, `bloque_claro`, `md`, `code` y `URL` de la Task 2.
-
-- [ ] **Step 1: Agregar la seccion 5 — el esqueleto de las seis preguntas**
+- [ ] **Step 7: Agregar la seccion 5 — el esqueleto de las seis preguntas**
 
 Una celda de markdown por pregunta (el enunciado tal como esta en el spec §3) y
 debajo una celda de codigo con la consulta a medio armar y el hueco marcado:
@@ -345,7 +300,7 @@ inicio de la seccion: cambiando un valor, el equipo corre su analisis completo.
 La P3 (composicion) lleva el recordatorio de que la respuesta correcta puede ser
 "la brecha se desarma", y que eso tambien es un hallazgo.
 
-- [ ] **Step 2: Agregar la seccion 6 — de SQL a grafica**
+- [ ] **Step 8: Agregar la seccion 6 — de SQL a grafica**
 
 ```python
 code("""import matplotlib.pyplot as plt
@@ -373,7 +328,7 @@ plt.show()""")
 El markdown senala que el `n=` en cada barra no es decoracion: es el chequeo de
 muestra visible en la grafica, y es parte de lo que se califica.
 
-- [ ] **Step 3: Agregar la seccion 7 — el plus de Quarto**
+- [ ] **Step 9: Agregar la seccion 7 — el plus de Quarto**
 
 Markdown con los cuatro comandos y la advertencia de que son puntos extra:
 
@@ -396,16 +351,14 @@ execute:
 ---
 ```
 
-- [ ] **Step 4: Regenerar, reejecutar y verificar**
+- [ ] **Step 10: Generar y ejecutar el cuaderno completo**
 
 ```bash
 python3 scripts/construir_cuaderno_07.py
 jupyter nbconvert --to notebook --execute --inplace \
   --ExecutePreprocessor.timeout=600 notebooks/07_proyecto_final_equilab.ipynb
 ```
-
-Y volver a correr el verificador del Step 8 de la Task 2.
-Expected: `celdas con error: 0`.
+Expected: termina sin error y el `.ipynb` queda con outputs.
 
 Ojo: las celdas del esqueleto (seccion 5) tienen `MI_DIMENSION = "___"` y **van a
 fallar al ejecutarse**. Antes de ejecutar el cuaderno, cambiar esa linea a
@@ -414,23 +367,42 @@ equipo la cambia por la suya. Si se prefiere dejarlas sin ejecutar, marcarlas co
 `"tags": ["raises-exception"]` en los metadatos de la celda para que nbconvert no
 aborte.
 
-- [ ] **Step 5: Commit**
+
+- [ ] **Step 11: Verificar que ninguna celda fallo y que las cifras del texto cuadran**
+
+Run:
+```bash
+python3 -c "
+import json
+nb=json.load(open('notebooks/07_proyecto_final_equilab.ipynb'))
+errores=[c for c in nb['cells'] if any(o.get('output_type')=='error' for o in c.get('outputs',[]))]
+vacias=[c for c in nb['cells'] if c['cell_type']=='code' and c['source'] and not c.get('outputs')]
+print('celdas con error:',len(errores),'| celdas de codigo sin salida:',len(vacias))
+texto=json.dumps(nb)
+for cifra in ['87,8','633.137','98,4','47,5','90,2']:
+    print(cifra, 'OK' if cifra in texto else 'FALTA')
+"
+```
+Expected: `celdas con error: 0`, y las cinco cifras en OK. Cualquier `FALTA`
+significa que el texto y las salidas se separaron: corregir el texto, no la salida.
+
+- [ ] **Step 12: Commit**
 
 ```bash
 git add scripts/construir_cuaderno_07.py notebooks/07_proyecto_final_equilab.ipynb
-git commit -m "Cuaderno 07: esqueleto de las seis preguntas, graficas y plus de Quarto" -- scripts/construir_cuaderno_07.py notebooks/07_proyecto_final_equilab.ipynb
+git commit -m "Cuaderno 07 del proyecto final: caso resuelto, esqueleto de las seis preguntas y plus de Quarto" -- scripts/construir_cuaderno_07.py notebooks/07_proyecto_final_equilab.ipynb
 git push origin main
 ```
 
 ---
 
-### Task 4: Las notas dictadas para el agente
+### Task 3: Las notas dictadas para el agente
 
 **Files:**
 - Create: `docs/reto_final_equilab_notas.md`
 
 **Interfaces:**
-- Produces: el texto que la Task 5 pasa como `--notas`. El nodo `planear` lo
+- Produces: el texto que la Task 4 pasa como `--notas`. El nodo `planear` lo
   inyecta al prompt bajo "Indicaciones de la docente (respetalas)", asi que lo
   que quede aqui es lo que el modelo obedece.
 
@@ -448,6 +420,10 @@ Contenido, en este orden:
    advertencia por debajo de 100 registros.
 5. **Los entregables**: cuaderno + sustentacion de 8–10 minutos. Sin dashboard.
    Puntos extra por el sitio en Quarto.
+   Y esta frase literal, porque el modelo tiende a inventar entregas escalonadas:
+   "UNA SOLA ENTREGA por equipo, que se califica completa con la rubrica. NO
+   generes fases, avances, entregas parciales ni entregables por semana. Los
+   `pasos` son guia de trabajo interna del equipo, no puntos de entrega."
 6. **La rubrica pedida**: cuatro criterios con estos pesos exactos — Rigor con
    datos de encuesta y SQL 30, Analisis y hallazgos 25, Visualizacion 20,
    Comunicacion y sustentacion 25. Cuatro niveles: Destacado, Competente, Basico,
@@ -470,19 +446,19 @@ git commit -m "Notas dictadas del reto final para el agente activity_creator" --
 
 ---
 
-### Task 5: Crear las cinco tareas en Canvas (borrador)
+### Task 4: Crear las cinco tareas en Canvas (borrador)
 
 **Files:**
 - Ninguno en el repo. La salida vive en Canvas.
 
 **Interfaces:**
-- Consumes: `docs/reto_final_equilab_notas.md` de la Task 4.
+- Consumes: `docs/reto_final_equilab_notas.md` de la Task 3.
 
-- [ ] **Step 1: Pedirle a la docente los tres datos que faltan**
+- [ ] **Step 1: Pedirle a la docente los dos datos que faltan**
 
 No arrancar sin ellos:
 
-1. **`--curso`**: el `course_id` de DataXperience en Canvas.
+1. ~~**`--curso`**~~: ya lo dio la docente — **35808**.
 2. **`--modo`**: `manual` con `--composicion "id,id,id,id;..."` si ya tiene los
    equipos armados, o `mezclado` para que el agente los arme heterogeneos por
    desempeno.
@@ -504,7 +480,7 @@ DataXperience no aparece, parar: el token no alcanza y hay que conectarlo antes.
 ```bash
 cd /Users/aor/aula_studio
 uv run python scripts/probar_actividad.py \
-  --curso <COURSE_ID> \
+  --curso 35808 \
   --materia "DataXperience" \
   --objetivo "Analizar con SQL sobre la GEIH la brecha laboral de una poblacion y defender ante un comite por que financiar su programa de empleabilidad" \
   --notas "$(cat '/Users/aor/Library/CloudStorage/OneDrive-Personal/Documentos/EAN/2026 C3/Data experience/docs/reto_final_equilab_notas.md')" \
@@ -526,6 +502,8 @@ Verificar contra el spec, en la salida impresa:
   en vez de `ok` y decirle que respete el reparto de las notas.
 - Rubrica de cuatro criterios con pesos 30 / 25 / 20 / 25 y cuatro niveles.
 - Cinco equipos de cuatro integrantes.
+- **Una sola entrega por equipo**: si en `entregables` aparecen avances,
+  fases o entregas parciales, responder con ajustes en vez de `ok`.
 
 - [ ] **Step 5: Entregarle la compuerta a la docente**
 

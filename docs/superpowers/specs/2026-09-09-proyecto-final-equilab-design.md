@@ -162,6 +162,12 @@ Cuatro criterios sobre 100 puntos, con los cuatro niveles del syllabus
 Entregables por equipo: **cuaderno + sustentación de 8–10 min**. Sin dashboard.
 Décimos adicionales por el sitio en Quarto.
 
+**Una sola entrega por equipo, evaluada íntegra.** No hay avances, fases ni
+entregas parciales: el equipo sube una vez y esa entrega se califica completa con
+los cuatro criterios. Lo que cambia entre equipos es el caso asignado, no el
+número de entregas. Esto es una restricción dura del montaje en Canvas (§6): el
+agente no debe generar entregables escalonados.
+
 ---
 
 ## 6. Montaje en Canvas
@@ -182,7 +188,8 @@ Parámetros de la corrida:
 | `puntos` | 100 |
 | `notas` | Los cinco casos dictados literalmente + las reglas de rigor + entregables + el plus |
 | `publicar_en_canvas` | `True` (crea en borrador; el clic de publicar es manual) |
-| `course_id`, `modo_grupos`, fechas, `modulo` | **pendientes** (ver §7) |
+| `course_id` | **35808** |
+| `modo_grupos`, fechas, `modulo` | **pendientes** (ver §7) |
 
 Los cinco casos van dictados en `notas`, que el nodo `planear` inyecta al prompt
 como "Indicaciones de la docente (respétalas)". El modelo no inventa el reparto.
@@ -195,7 +202,7 @@ la publicación los da la docente, no el asistente.
 
 ## 7. Decisiones pendientes
 
-1. **Curso de Canvas**: nombre o id de DataXperience.
+1. ~~**Curso de Canvas**~~: resuelto — `course_id` **35808**.
 2. **Formación de equipos**: ¿lista ya armada (modo manual) o los arma el agente?
    Si los arma, se recomienda modo mezclado por desempeño, para que ningún equipo
    quede con los cuatro más flojos en un trabajo que pesa el 60 % del corte.
