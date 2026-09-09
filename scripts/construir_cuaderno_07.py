@@ -885,8 +885,8 @@ celdas.append(md(
     "carpeta > los tres puntos del archivo > Descargar."))
 
 celdas.append(code(
-    'datos.to_csv("informalidad_migrantes_2025.csv", index=False)\n'
-    'print("Guardado: informalidad_migrantes_2025.csv |", len(datos), "filas")\n'
+    'datos.to_csv(f"informalidad_{MI_DIMENSION}_2025.csv", index=False)\n'
+    'print(f"Guardado: informalidad_{MI_DIMENSION}_2025.csv |", len(datos), "filas")\n'
     "datos"))
 
 # --------------------------------------------------------------- seccion 7 ---
